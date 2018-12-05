@@ -4,31 +4,6 @@ $router->get('/', function () use ($router) {
     return 'OK';
 });
 
-$router->post('register', function (Illuminate\Http\Request $request) {
-    $email = $request->input('email');
-    $password = $request->input('password');
-
-    $result = 0;
-    $token = generateRandomString();
-
-    try {
-        $result = app('db')->table('users')->insert(
-            [
-                'email' => $email,
-                'password' => md5($password),
-                'token' => $token,
-                'created_at' => Carbon\Carbon::now()->toDateTimeString(),
-                'updated_at' => Carbon\Carbon::now()->toDateTimeString(),
-            ]
-        );
-
-    } catch (\Illuminate\Database\QueryException $e) {
-        $reason = $e->errorInfo[1] . " - " . $e->errorInfo[2];
-    }
-
-    return ($result) ? ['response' => '1', 'auth_token' => $token] : ['response' => '0', 'reason' => $reason];
-});
-
 $router->post('login', function (Illuminate\Http\Request $request) {
     $email = $request->input('email');
     $password = $request->input('password');
@@ -38,7 +13,7 @@ $router->post('login', function (Illuminate\Http\Request $request) {
 
     if (app('db')->table('users')->where('email', $email)->exists()) {
         try {
-            $result = app('db')->table('email')->where('password', md5($token))->update(
+            $result = app('db')->table('email')->where('password', md5($password))->update(
                 [
                     'token' => $token,
                     'updated_at' => Carbon\Carbon::now()->toDateTimeString(),
@@ -48,6 +23,21 @@ $router->post('login', function (Illuminate\Http\Request $request) {
         } catch (\Illuminate\Database\QueryException $e) {
             $reason = $e->errorInfo[1] . " - " . $e->errorInfo[2];
         }
+    } else {
+        try {
+            $result = app('db')->table('users')->insert(
+                [
+                    'email' => $email,
+                    'password' => md5($password),
+                    'token' => $token,
+                    'created_at' => Carbon\Carbon::now()->toDateTimeString(),
+                    'updated_at' => Carbon\Carbon::now()->toDateTimeString(),
+                ]
+            );
+    
+        } catch (\Illuminate\Database\QueryException $e) {
+            $reason = $e->errorInfo[1] . " - " . $e->errorInfo[2];
+        }   
     }
 
     return ($result) ? ['response' => '1', 'auth_token' => $token] : ['response' => '0', 'reason' => $reason];
