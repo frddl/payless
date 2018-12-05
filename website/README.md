@@ -1,0 +1,1 @@
+This folder will contain the website on the development stage.
