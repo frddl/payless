@@ -1,10 +1,10 @@
 <?php
 
-$router->get('/', function () use ($router) {
+$router->get('/payless/', function () use ($router) {
     return 'OK';
 });
 
-$router->post('login', function (Illuminate\Http\Request $request) {
+$router->post('/paylesslogin', function (Illuminate\Http\Request $request) {
     $email = $request->input('email');
     $password = $request->input('password');
 
@@ -43,11 +43,11 @@ $router->post('login', function (Illuminate\Http\Request $request) {
     return ($result) ? ['response' => '1', 'auth_token' => $token] : ['response' => '0', 'reason' => $reason];
 });
 
-$router->get('/predefinedCategories', function () {
+$router->get('/payless/predefinedCategories', function () {
     return app('db')->table('predefined_categories')->select()->get()->toJson();
 });
 
-$router->get('/userCategories/{token}', function ($token) {
+$router->get('/payless/userCategories/{token}', function ($token) {
     if (app('db')->table('users')->where('token', $token)->exists()) {
         $id = json_decode(app('db')->table('users')->where('token', $token)->get()->toJson(), true)[0]['id'];
         return app('db')->table('user_categories')->where('user_id', $id)->get()->toJson();
@@ -56,7 +56,7 @@ $router->get('/userCategories/{token}', function ($token) {
     }
 });
 
-$router->post('/userCategories/{token}/add', function (Illuminate\Http\Request $request, $token) {
+$router->post('/payless/userCategories/{token}/add', function (Illuminate\Http\Request $request, $token) {
     if (app('db')->table('users')->where('token', $token)->exists()) {
         $id = json_decode(app('db')->table('users')->where('token', $token)->get()->toJson(), true)[0]['id'];
         $cat_name = $request->input('cat_name');
@@ -81,7 +81,7 @@ $router->post('/userCategories/{token}/add', function (Illuminate\Http\Request $
     }
 });
 
-$router->post('/userCategories/{token}/remove', function (Illuminate\Http\Request $request, $token) {
+$router->post('/payless/userCategories/{token}/remove', function (Illuminate\Http\Request $request, $token) {
     if (app('db')->table('users')->where('token', $token)->exists()) {
         $id = $request->input('cat_id');
 
@@ -96,7 +96,7 @@ $router->post('/userCategories/{token}/remove', function (Illuminate\Http\Reques
     }
 });
 
-$router->get('/userExpenses/{token}', function ($token) {
+$router->get('/payless/userExpenses/{token}', function ($token) {
     if (app('db')->table('user')->where('token', $token)->exists()) {
         $id = json_decode(app('db')->table('users')->where('token', $token)->get()->toJson(), true)[0]['id'];
         return app('db')->table('expenses')->where('user_id', $id)->get()->toJson();
@@ -105,7 +105,7 @@ $router->get('/userExpenses/{token}', function ($token) {
     }
 });
 
-$router->post('/userExpenses/{token}/add', function (Illuminate\Http\Request $request, $token) {
+$router->post('/payless/userExpenses/{token}/add', function (Illuminate\Http\Request $request, $token) {
     if (app('db')->table('users')->where('token', $token)->exists()) {
         $id = json_decode(app('db')->table('users')->where('token', $token)->get()->toJson(), true)[0]['id'];
 
@@ -131,7 +131,7 @@ $router->post('/userExpenses/{token}/add', function (Illuminate\Http\Request $re
     }
 });
 
-$router->get('/userIncomes/{token}', function ($token) {
+$router->get('/payless/userIncomes/{token}', function ($token) {
     if (app('db')->table('user')->where('token', $token)->exists()) {
         $id = json_decode(app('db')->table('users')->where('token', $token)->get()->toJson(), true)[0]['id'];
         return app('db')->table('incomes')->where('user_id', $id)->get()->toJson();
@@ -140,7 +140,7 @@ $router->get('/userIncomes/{token}', function ($token) {
     }
 });
 
-$router->post('/userIncomes/{token}/add', function (Illuminate\Http\Request $request, $token) {
+$router->post('/payless/userIncomes/{token}/add', function (Illuminate\Http\Request $request, $token) {
     if (app('db')->table('users')->where('token', $token)->exists()) {
         $id = json_decode(app('db')->table('users')->where('token', $token)->get()->toJson(), true)[0]['id'];
 
